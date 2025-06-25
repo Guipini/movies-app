@@ -1,11 +1,16 @@
-extends layout.pug
+extends layout
 
 block content
-  h1 Welcome to the Movies Application
-  p Explore and manage your movie collection.
-  a(href="/movies") View Movies
-  if !session.userId
-    p
-      a(href="/auth/register") Register
+  .welcome
+    h1 Welcome to Movies App
+    
+    if user
+      p Hello, #{user.username}! Ready to explore some amazing movies?
+      p Discover, add, and manage your favorite movies all in one place.
+      a(href="/movies") Browse Movies
+    else
+      p Your personal movie collection manager
+      p Join us to start building your movie database and discover new favorites.
+      a(href="/auth/register") Get Started
       |  or 
-      a(href="/auth/login") Login
+      a(href="/auth/login") Sign In

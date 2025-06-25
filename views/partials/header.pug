@@ -3,7 +3,8 @@ header
     a(href="/") Home
     a(href="/movies") Movies
     if session.userId
-      a(href="/auth/logout") Logout
+      form(action="/auth/logout", method="POST", style="display: inline;")
+        button(type="submit", style="background: none; border: none; color: blue; cursor: pointer; text-decoration: underline;") Logout
     else
       a(href="/auth/login") Login
       a(href="/auth/register") Register

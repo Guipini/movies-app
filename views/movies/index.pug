@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+    h1 My Movie Collection
+    
+    .actions
+        a(href="/movies/new") Add New Movie
+
+    if movies.length > 0
+        ul
+            each movie in movies
+                li
+                    a(href=`/movies/${movie._id}`) #{movie.name}
+                    p Year: #{movie.year} | Rating: #{movie.rating}/10
+                    if movie.genres && movie.genres.length > 0
+                        p Genres: #{movie.genres.join(', ')}
+                    p= movie.description.substring(0, 150) + (movie.description.length > 150 ? '...' : '')
+                    
+                    .actions
+                        a(href=`/movies/${movie._id}/edit`) Edit
+                        form(action=`/movies/${movie._id}?_method=DELETE` method="POST" style="display: inline-block;")
+                            button(type="submit" class="danger" onclick="return confirm('Are you sure?')") Delete
+    else
+        .welcome
+            p You haven't added any movies yet.
+            a(href="/movies/new") Add Your First Movie
