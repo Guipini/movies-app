@@ -26,6 +26,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+// Serve stagewise toolbar from node_modules in development
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/stagewise', express.static(path.join(__dirname, 'node_modules/@stagewise/toolbar/dist')));
+}
 app.use(methodOverride("_method")); // For PUT and DELETE requests
 app.use(
   session({
@@ -36,9 +41,10 @@ app.use(
   })
 );
 
-// Make session available in Pug templates
+// Make session and environment available in Pug templates
 app.use((req, res, next) => {
   res.locals.session = req.session; // This makes req.session accessible as 'session' in pug
+  res.locals.process = { env: { NODE_ENV: process.env.NODE_ENV || 'development' } }; // Make NODE_ENV available
   next();
 });
 

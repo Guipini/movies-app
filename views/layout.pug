@@ -10,3 +10,10 @@ html(lang="en")
     .container
       block content
     include partials/footer.pug
+    
+    // Scripts
+    script(src="/js/main.js")
+    // Load stagewise only in development
+    if process.env.NODE_ENV !== 'production'
+      script(src="/js/stagewise-helpers.js")
+      script(src="/js/stagewise-init.js")

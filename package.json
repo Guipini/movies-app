@@ -23,6 +23,8 @@
     "pug": "^3.0.0"
   },
   "devDependencies": {
+    "@stagewise-plugins/react": "^0.5.2",
+    "@stagewise/toolbar": "^0.5.2",
     "nodemon": "^2.0.0"
   }
 }
