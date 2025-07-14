@@ -7,7 +7,7 @@ const Movie = require("../models/Movie");
 router.get("/", async (req, res) => {
   try {
     const movies = await Movie.find();
-    res.render("movies/index", { movies }); // Assuming you'll have an index.pug in movies/
+    res.render("movies/index", { movies, currentUser: req.user });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving movies");
@@ -77,7 +77,7 @@ router.get("/:id", async (req, res) => {
     if (!movie) {
       return res.status(404).send("Movie not found");
     }
-    res.render("movies/show", { movie });
+    res.render("movies/show", { movie, currentUser: req.user });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving movie details");
@@ -88,11 +88,11 @@ router.get("/:id", async (req, res) => {
 router.get("/:id/edit", async (req, res) => {
   try {
     const movie = await Movie.findById(req.params.id);
-    if (movie.createdBy.toString() !== req.user._id.toString()) {
-      return res.status(403).send("Unauthorized");
-    }
     if (!movie) {
       return res.status(404).send("Movie not found");
+    }
+    if (movie.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).send("Unauthorized");
     }
     res.render("movies/edit", { movie });
   } catch (err) {
@@ -134,17 +134,19 @@ router.put(
     }
 
     try {
+      const movie = await Movie.findById(req.params.id);
+      if (!movie) {
+        return res.status(404).send("Movie not found");
+      }
+      if (movie.createdBy.toString() !== req.user._id.toString()) {
+        return res.status(403).send("Unauthorized");
+      }
+      
       const updatedMovie = await Movie.findByIdAndUpdate(
         req.params.id,
         req.body,
         { new: true }
       );
-      if (!updatedMovie) {
-        return res.status(404).send("Movie not found");
-      }
-      if (updatedMovie.createdBy.toString() !== req.user._id.toString()) {
-        return res.status(403).send("Unauthorized");
-      }
       res.redirect(`/movies/${updatedMovie._id}`);
     } catch (err) {
       console.error(err);
@@ -156,13 +158,15 @@ router.put(
 // DELETE movie
 router.delete("/:id", async (req, res) => {
   try {
-    const deletedMovie = await Movie.findByIdAndDelete(req.params.id);
-    if (deletedMovie.createdBy.toString() !== req.user._id.toString()) {
-      return res.status(403).send("Unauthorized");
-    }
-    if (!deletedMovie) {
+    const movie = await Movie.findById(req.params.id);
+    if (!movie) {
       return res.status(404).send("Movie not found");
     }
+    if (movie.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).send("Unauthorized");
+    }
+    
+    await Movie.findByIdAndDelete(req.params.id);
     res.redirect("/movies");
   } catch (err) {
     console.error(err);
