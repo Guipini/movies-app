@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+  h1 Create Account
+
+  // Display validation errors
+  if errors && errors.length > 0
+    .alert.alert-error
+      ul
+        each error in errors
+          li= error.msg
+
+  form(action="/auth/register" method="POST")
+    .form-group
+      label(for="username") Username:
+      input(type="text" id="username" name="username" required 
+            placeholder="3-20 characters, letters and numbers only" 
+            value=formData.username || "")
+      small.form-text Username must be 3-20 characters long and contain only letters and numbers
+
+    .form-group
+      label(for="email") Email:
+      input(type="email" id="email" name="email" required 
+            placeholder="Enter your email address" 
+            value=formData.email || "")
+
+    .form-group
+      label(for="password") Password:
+      input(type="password" id="password" name="password" required 
+            placeholder="Create a strong password")
+      small.form-text Must be at least 8 characters with uppercase, lowercase, and number
+
+    .form-group
+      label(for="confirmPassword") Confirm Password:
+      input(type="password" id="confirmPassword" name="confirmPassword" required 
+            placeholder="Re-enter your password")
+
+    .actions
+      input(type="submit" value="Sign Up")
+      p Already have an account? 
+        a(href="/auth/login") Sign In 

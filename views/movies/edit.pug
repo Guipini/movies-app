@@ -1,0 +1,46 @@
+extends ../layout
+
+block content
+  h1 Edit Movie: #{movie.name}
+
+  form(action=`/movies/${movie._id}?_method=PUT` method="POST")
+    .form-group
+      label(for="name") Movie Name:
+      input(type="text" id="name" name="name" value=movie.name required)
+      if errors && errors.name
+        .error-message= errors.name
+
+    .form-group
+      label(for="description") Description:
+      textarea(id="description" name="description" required)= movie.description
+      if errors && errors.description
+        .error-message= errors.description
+
+    .form-group
+      label(for="year") Release Year:
+      input(type="number" id="year" name="year" value=movie.year min="1900" max="2030" required)
+      small.form-text Year the movie was released (1900-2030)
+      if errors && errors.year
+        .error-message= errors.year
+
+    .form-group
+      label(for="rating") Rating (0-10):
+      input(type="number" id="rating" name="rating" value=movie.rating min="0" max="10" step="0.1" required)
+      small.form-text Rate the movie from 0 to 10
+      if errors && errors.rating
+        .error-message= errors.rating
+
+    .form-group
+      label Genres:
+      .genre-selection
+        - const availableGenres = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Drama', 'Family', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']
+        - const selectedGenres = movie.genres || []
+        each genre in availableGenres
+          .genre-checkbox
+            input(type="checkbox" id=`genre-${genre}` name="genres" value=genre checked=selectedGenres.includes(genre))
+            label(for=`genre-${genre}`)= genre
+      small.form-text Select one or more genres that apply to this movie
+
+    .actions
+      input(type="submit" value="Update Movie")
+      a(href=`/movies/${movie._id}`) Cancel 

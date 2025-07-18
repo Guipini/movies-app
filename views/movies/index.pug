@@ -1,0 +1,81 @@
+extends ../layout
+
+block content
+    .movies-header
+        h1= currentUser ? 'My Movie Collection' : 'Movie Collection'
+        .header-actions
+            .movies-stats
+                if movies.length > 0
+                    span.movie-count #{movies.length} movie#{movies.length !== 1 ? 's' : ''} #{currentUser ? 'in your collection' : 'available'}
+                else
+                    span.movie-count No movies yet
+            if currentUser
+                a.btn-primary(href="/movies/new") 
+                    span.btn-icon +
+                    span Add New Movie
+            else
+                a.btn-primary(href="/auth/login") 
+                    span.btn-icon 🔐
+                    span Login to Add Movies
+
+    if movies.length > 0
+        .movies-container
+            .movies-grid
+                each movie in movies
+                    .movie-card
+                        .movie-header
+                            h3.movie-title
+                                a(href=`/movies/${movie._id}`) #{movie.name}
+                                if currentUser && movie.createdBy && movie.createdBy.toString() === currentUser._id.toString()
+                                    span.owner-badge Your Movie
+                            .movie-rating
+                                .rating-stars
+                                    - var stars = Math.round(movie.rating / 2)
+                                    - var i = 0
+                                    while i < 5
+                                        if i < stars
+                                            span.star.filled ★
+                                        else
+                                            span.star ☆
+                                        - i++
+                                .rating-score #{movie.rating}/10
+                        
+                        .movie-meta
+                            .movie-year
+                                span.meta-label Year:
+                                span.meta-value #{movie.year}
+                            if movie.genres && movie.genres.length > 0
+                                .movie-genres
+                                    span.meta-label Genres:
+                                    .genres-list
+                                        each genre in movie.genres
+                                            span.genre-tag #{genre}
+                        
+                        .movie-description
+                            p= movie.description.substring(0, 120) + (movie.description.length > 120 ? '...' : '')
+                        
+                        .movie-actions
+                            a.btn-secondary(href=`/movies/${movie._id}`) View Details
+                            if currentUser && movie.createdBy && movie.createdBy.toString() === currentUser._id.toString()
+                                a.btn-edit(href=`/movies/${movie._id}/edit`) Edit
+                                form.delete-form(action=`/movies/${movie._id}?_method=DELETE` method="POST")
+                                    button.btn-danger.delete-movie-btn(type="button" data-movie-id=movie._id data-movie-name=movie.name) Delete
+    else
+        .empty-state
+            .empty-icon 🎬
+            if currentUser
+                h2 Start Your Movie Collection
+                p You haven't added any movies yet. Create your first movie entry to begin building your personal movie database.
+                a.btn-primary.btn-large(href="/movies/new") 
+                    span.btn-icon +
+                    span Add Your First Movie
+            else
+                h2 No Movies Available
+                p There are no movies in the database yet. Sign up to start adding movies to the collection!
+                .error-actions
+                    a.btn-primary(href="/auth/register") 
+                        span.btn-icon 📝
+                        span Sign Up
+                    a.btn-secondary(href="/auth/login") 
+                        span.btn-icon 🔐
+                        span Login

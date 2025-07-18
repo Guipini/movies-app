@@ -1,0 +1,55 @@
+extends ../layout
+
+block content
+    .movie-detail-container
+        .movie-detail-header
+            .back-navigation
+                a.btn-back(href="/movies") 
+                    span.back-icon ←
+                    span Back to Movies
+            
+            .movie-title-section
+                h1.movie-detail-title= movie.name
+                if currentUser && movie.createdBy && movie.createdBy.toString() === currentUser._id.toString()
+                    span.owner-badge Your Movie
+
+        .movie-detail-card
+            .movie-detail-header-section
+                .movie-rating-section
+                    .rating-display
+                        .rating-stars-large
+                            - var stars = Math.round(movie.rating / 2)
+                            - var i = 0
+                            while i < 5
+                                if i < stars
+                                    span.star.filled ★
+                                else
+                                    span.star ☆
+                                - i++
+                        .rating-score-large #{movie.rating}/10
+                
+                .movie-meta-grid
+                    .meta-item
+                        .meta-label Year
+                        .meta-value= movie.year
+                    
+                    .meta-item
+                        .meta-label Created
+                        .meta-value= movie.createdAt.toDateString()
+                    
+                    if movie.genres && movie.genres.length > 0
+                        .meta-item.genres-section
+                            .meta-label Genres
+                            .genres-container
+                                each genre in movie.genres
+                                    span.genre-tag-large #{genre}
+
+            .movie-description-section
+                .section-title Description
+                .description-content= movie.description
+
+            .movie-actions-section
+                if currentUser && movie.createdBy && movie.createdBy.toString() === currentUser._id.toString()
+                    a.btn-edit(href=`/movies/${movie._id}/edit`) Edit Movie
+                    form.delete-form(action=`/movies/${movie._id}?_method=DELETE` method="POST")
+                        button.btn-danger.delete-movie-btn(type="button" data-movie-id=movie._id data-movie-name=movie.name) Delete Movie

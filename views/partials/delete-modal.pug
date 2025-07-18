@@ -1,0 +1,18 @@
+// Enhanced delete confirmation modal
+#deleteModal.modal.modal-hidden
+  .modal-backdrop
+  .modal-content
+    .modal-header
+      h3.modal-title ⚠️ Confirm Deletion
+      button.modal-close(type="button" aria-label="Close") ×
+    .modal-body
+      p.modal-message
+      .movie-details
+        .detail-item
+          strong Movie:
+          span.movie-name
+        .detail-item
+          strong This action cannot be undone
+    .modal-footer
+      button.btn-cancel(type="button") Cancel
+      button.btn-confirm-delete(type="button") Delete Movie
