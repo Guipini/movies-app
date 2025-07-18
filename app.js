@@ -2,9 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const path = require("path");
 const methodOverride = require("method-override");
-const { requireAuth } = require("./middleware/auth");
+const { requireAuth, loadUser } = require("./middleware/auth");
+const { flashMiddleware } = require("./middleware/flash");
 const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 
@@ -38,13 +40,22 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: mongoUri,
+      touchAfter: 24 * 3600 // lazy session update
+    }),
     cookie: { 
-      secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      secure: process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV !== 'development',
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax'
     },
   })
 );
+
+// Flash message middleware
+app.use(flashMiddleware);
 
 // Make session and environment available in Pug templates
 app.use((req, res, next) => {
@@ -66,12 +77,25 @@ const moviesRouter = require("./routes/movies");
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
-app.use("/movies", requireAuth, moviesRouter);
+app.use("/movies", loadUser, moviesRouter); // Use loadUser instead of requireAuth for public viewing
+
+// 404 Handler - Must be after all other routes
+app.use((req, res, next) => {
+  res.status(404).render("error/404", {
+    title: "Page Not Found",
+    url: req.originalUrl
+  });
+});
 
 // Error Handling Middleware (should be last)
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("Something broke!");
+  
+  // Render custom 500 page
+  res.status(500).render("error/500", {
+    title: "Server Error",
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  });
 });
 
 // Start the server

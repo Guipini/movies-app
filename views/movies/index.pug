@@ -2,16 +2,21 @@ extends ../layout
 
 block content
     .movies-header
-        h1 My Movie Collection
+        h1= currentUser ? 'My Movie Collection' : 'Movie Collection'
         .header-actions
             .movies-stats
                 if movies.length > 0
-                    span.movie-count #{movies.length} movie#{movies.length !== 1 ? 's' : ''} in your collection
+                    span.movie-count #{movies.length} movie#{movies.length !== 1 ? 's' : ''} #{currentUser ? 'in your collection' : 'available'}
                 else
                     span.movie-count No movies yet
-            a.btn-primary(href="/movies/new") 
-                span.btn-icon +
-                span Add New Movie
+            if currentUser
+                a.btn-primary(href="/movies/new") 
+                    span.btn-icon +
+                    span Add New Movie
+            else
+                a.btn-primary(href="/auth/login") 
+                    span.btn-icon 🔐
+                    span Login to Add Movies
 
     if movies.length > 0
         .movies-container
@@ -54,12 +59,23 @@ block content
                             if currentUser && movie.createdBy && movie.createdBy.toString() === currentUser._id.toString()
                                 a.btn-edit(href=`/movies/${movie._id}/edit`) Edit
                                 form.delete-form(action=`/movies/${movie._id}?_method=DELETE` method="POST")
-                                    button.btn-danger(type="submit" onclick="return confirm('Are you sure you want to delete this movie?')") Delete
+                                    button.btn-danger.delete-movie-btn(type="button" data-movie-id=movie._id data-movie-name=movie.name) Delete
     else
         .empty-state
             .empty-icon 🎬
-            h2 Start Your Movie Collection
-            p You haven't added any movies yet. Create your first movie entry to begin building your personal movie database.
-            a.btn-primary.btn-large(href="/movies/new") 
-                span.btn-icon +
-                span Add Your First Movie
+            if currentUser
+                h2 Start Your Movie Collection
+                p You haven't added any movies yet. Create your first movie entry to begin building your personal movie database.
+                a.btn-primary.btn-large(href="/movies/new") 
+                    span.btn-icon +
+                    span Add Your First Movie
+            else
+                h2 No Movies Available
+                p There are no movies in the database yet. Sign up to start adding movies to the collection!
+                .error-actions
+                    a.btn-primary(href="/auth/register") 
+                        span.btn-icon 📝
+                        span Sign Up
+                    a.btn-secondary(href="/auth/login") 
+                        span.btn-icon 🔐
+                        span Login

@@ -8,12 +8,10 @@ html(lang="en")
   body
     include partials/header.pug
     .container
+      include partials/flash.pug
       block content
     include partials/footer.pug
+    include partials/delete-modal.pug
     
     // Scripts
     script(src="/js/main.js")
-    // Load stagewise only in development
-    if process.env.NODE_ENV !== 'production'
-      script(src="/js/stagewise-helpers.js")
-      script(src="/js/stagewise-init.js")

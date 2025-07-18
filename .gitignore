@@ -85,3 +85,5 @@ STAGEWISE-FEATURES.md
 public/js/stagewise*.js
 node_modules/@stagewise/
 node_modules/@stagewise-plugins/
+
+.vercel
