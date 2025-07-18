@@ -12,13 +12,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Connect to MongoDB
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/movies-app';
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => {
+    console.log(`MongoDB connected to: ${process.env.NODE_ENV === 'production' ? 'Atlas Cloud' : 'Local Database'}`);
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1); // Exit process on connection failure in production
+  });
 
 // Middleware
 app.use(logger("dev"));
@@ -27,24 +33,25 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Serve stagewise toolbar from node_modules in development
-if (process.env.NODE_ENV !== 'production') {
-  app.use('/stagewise', express.static(path.join(__dirname, 'node_modules/@stagewise/toolbar/dist')));
-}
 app.use(methodOverride("_method")); // For PUT and DELETE requests
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Set to true in production with HTTPS
+    cookie: { 
+      secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    },
   })
 );
 
 // Make session and environment available in Pug templates
 app.use((req, res, next) => {
   res.locals.session = req.session; // This makes req.session accessible as 'session' in pug
-  res.locals.process = { env: { NODE_ENV: process.env.NODE_ENV || 'development' } }; // Make NODE_ENV available
+  res.locals.process = {
+    env: { NODE_ENV: process.env.NODE_ENV || "development" },
+  }; // Make NODE_ENV available
   next();
 });
 
