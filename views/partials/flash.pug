@@ -1,0 +1,10 @@
+// Flash message partial - displays all flash messages
+if flash
+  if flash.success
+    .alert.alert-success.flash-message= flash.success
+  if flash.error
+    .alert.alert-error.flash-message= flash.error
+  if flash.info
+    .alert.alert-info.flash-message= flash.info
+  if flash.warning
+    .alert.alert-warning.flash-message= flash.warning

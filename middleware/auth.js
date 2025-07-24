@@ -1,24 +1,29 @@
 const User = require("../models/User"); // Require the User model
 
-async function requireAuth(req, res, next) {
-  console.log("req.session.userId in requireAuth:", req.session.userId); // Log session ID
+// Middleware that populates req.user if logged in, but doesn't require authentication
+async function loadUser(req, res, next) {
   if (req.session.userId) {
     try {
       const user = await User.findById(req.session.userId);
-      console.log("User fetched in requireAuth:", user); // Log fetched user
       if (user) {
         req.user = user; // Attach the user object to req.user
-        // Explicitly check if req.user is set before proceeding
-        if (req.user && req.user._id) {
-          next();
-        } else {
-          // Fallback if req.user somehow isn't set despite finding user
-          console.error("req.user not set after finding user in requireAuth");
-          req.session.destroy((err) => {
-            if (err) console.error(err);
-            res.redirect("/auth/login");
-          });
-        }
+      }
+    } catch (err) {
+      console.error("Error fetching user in loadUser:", err);
+      // Don't redirect on error, just continue without user
+    }
+  }
+  next(); // Always continue, even if no user is logged in
+}
+
+// Middleware that requires authentication - redirects if not logged in
+async function requireAuth(req, res, next) {
+  if (req.session.userId) {
+    try {
+      const user = await User.findById(req.session.userId);
+      if (user) {
+        req.user = user; // Attach the user object to req.user
+        next();
       } else {
         // User ID in session but user not found in DB (e.g., deleted)
         req.session.destroy((err) => {
@@ -36,4 +41,4 @@ async function requireAuth(req, res, next) {
   }
 }
 
-module.exports = { requireAuth };
+module.exports = { requireAuth, loadUser };
