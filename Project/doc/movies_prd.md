@@ -6,7 +6,7 @@
 - **Course**: CPAN 212 – Modern Web Technologies
 - **Team Size**: 3 Members (Gustavo, Amy, and Yagna)
 - **Weight**: 30 % of Final Grade
-- **Deployment Target**: Heroku
+- **Deployment Target**: Vercel
 
 ---
 
@@ -19,9 +19,9 @@ A web-based movie management system where users can register, log in, and manage
 ### 1.2 Core Features
 
 - [x] User registration and authentication
-- [ ] Movie CRUD operations (Create, Read, Update, Delete)
-- [ ] User-specific access controls
-- [ ] Form validation and error handling
+- [x] Movie CRUD operations (Create, Read, Update, Delete)
+- [x] User-specific access controls
+- [x] Form validation and error handling
 - [x] Responsive web interface using **Pug** templates
 
 ### 1.3 Technical Stack
@@ -32,7 +32,7 @@ A web-based movie management system where users can register, log in, and manage
 | **Database**       | MongoDB + Mongoose ODM |
 | **Frontend**       | Pug templating engine  |
 | **Authentication** | Session-based          |
-| **Deployment**     | Heroku                 |
+| **Deployment**     | Vercel                 |
 
 ---
 
@@ -50,9 +50,9 @@ A web-based movie management system where users can register, log in, and manage
 
 | Team Member         | Primary Responsibility  | Key Deliverables                                    |
 | ------------------- | ----------------------- | --------------------------------------------------- |
-| **Gustavo (Dev A)** | Backend Core & Database | Express setup, Mongoose models, Movie CRUD APIs     |
+| **Gustavo (Dev A)** | Backend, Database & Deployment | Express setup, Mongoose models, Movie CRUD APIs, Vercel deployment |
 | **Amy (Dev B)**     | Authentication System   | User registration, login/logout, access controls    |
-| **Yagna (Dev C)**   | Frontend & Deployment   | Pug templates, forms, validation, Heroku deployment |
+| **Yagna (Dev C)**   | Frontend & UI/UX        | Pug templates, forms, validation, styling           |
 
 ---
 
@@ -208,7 +208,7 @@ A web-based movie management system where users can register, log in, and manage
 
 ---
 
-## 5 · Work Stream C – Frontend & Deployment
+## 5 · Work Stream C – Frontend & UI/UX
 
 **Assigned to**: Yagna (Developer C)\
 **Dependencies**: Backend routes from Work-Streams A & B\
@@ -270,15 +270,15 @@ Auth Forms
 - Movie card layouts
 - Consistent message styling
 
-#### 5.1.5 Heroku Deployment
+#### 5.1.5 UI/UX Enhancements
 
 ```text
-- Procfile configuration
-- Environment variables
-- MongoDB Atlas connection
-- Build-script optimization
-- Error logging
-- Production-ready settings
+- Interactive elements and animations
+- User experience optimization
+- Cross-browser compatibility
+- Performance optimization
+- Accessibility improvements
+- Visual design consistency
 ```
 
 ### 5.2 Error Handling & Validation
@@ -296,7 +296,7 @@ Auth Forms
 - Responsive design verified
 - Client-side JS features operational
 - Error messages display properly
-- Deployed & accessible via Heroku URL
+- UI/UX optimized and user-friendly
 
 ---
 
@@ -353,24 +353,57 @@ Auth Forms
 
 ```text
 movies-app/
-├── app.js            # Main application
-├── package.json      # Dependencies
-├── Procfile          # Heroku config
-├── .env              # Environment variables
+├── app.js                    # Main application
+├── package.json              # Dependencies
+├── package-lock.json         # Dependency lock file
+├── Procfile                  # Heroku config
+├── vercel.json               # Vercel deployment config
+├── seed-movies.js            # Database seeding script
+├── README.md                 # Project documentation
+├── DEMO_GUIDE.md             # Demo instructions
+├── DEPLOYMENT.md             # Deployment guide
+├── DETAILED_DEMO_SCRIPT.md   # Detailed demo script
+├── Git.md                    # Git workflow guide
+├── Git.pdf                   # Git guide PDF
+├── Project/
+│   └── doc/
+│       └── movies_prd.md     # This PRD document
 ├── routes/
-│   ├── movies.js
-│   └── auth.js
+│   ├── index.js              # Home route
+│   ├── movies.js             # Movie routes
+│   └── auth.js               # Authentication routes
 ├── models/
-│   ├── Movie.js
-│   └── User.js
+│   ├── Movie.js              # Movie schema
+│   └── User.js               # User schema
 ├── middleware/
-│   └── auth.js
-├── views/            # Pug templates
+│   ├── auth.js               # Authentication middleware
+│   └── flash.js              # Flash message middleware
+├── views/                    # Pug templates
+│   ├── layout.pug            # Base layout
+│   ├── index.pug             # Homepage
+│   ├── auth/
+│   │   ├── login.pug         # Login form
+│   │   └── register.pug      # Registration form
+│   ├── movies/
+│   │   ├── index.pug         # Movie listing
+│   │   ├── show.pug          # Movie details
+│   │   ├── new.pug           # Add movie form
+│   │   └── edit.pug          # Edit movie form
+│   ├── error/
+│   │   ├── 404.pug           # 404 error page
+│   │   └── 500.pug           # 500 error page
+│   └── partials/
+│       ├── header.pug        # Navigation header
+│       ├── footer.pug        # Footer component
+│       ├── flash.pug         # Flash messages
+│       └── delete-modal.pug  # Delete confirmation modal
 ├── public/
 │   ├── css/
+│   │   └── style.css         # Main stylesheet
 │   ├── js/
-│   └── images/
-└── controllers/      # (optional) route controllers
+│   │   └── main.js           # Client-side JavaScript
+│   └── favicon.ico           # Site favicon
+└── node_modules/             # NPM dependencies
 ```
 
 ### 7.3 Database Schema
@@ -395,9 +428,9 @@ movies: {
 | ------------------------------------- | ------ | --------------- | -------------------------------------------- |
 | Express app with Pug & Mongoose       | 20     | Gustavo (Dev A) | App runs, templates render, DB connected     |
 | Add, edit & delete movie              | 20     | Gustavo + Yagna | Full CRUD operations working                 |
-| Login & Logout                        | 20     | Amy (Dev B)     | Auth system functional                       |
+| Login & Logout                        | 20     | Amy + Yagna     | Auth system functional                       |
 | User registration & route restriction | 20     | Amy (Dev B)     | Registration works, access controls enforced |
-| Heroku deployment                     | 20     | Yagna (Dev C)   | App accessible via Heroku URL                |
+| Vercel deployment                     | 20     | Gustavo (Dev A) | App accessible via Vercel URL                |
 
 ---
 
@@ -429,7 +462,7 @@ movies: {
 | ----- | ---------------------------------------- | ----------------------------------- | ------------------------------- |
 | **1** | Express setup, Movie model, basic routes | User model, auth routes, middleware | Template structure, basic forms |
 | **2** | Movie CRUD completion, testing           | Access controls, validation         | Form completion, styling, JS    |
-| **3** | Integration support, bug fixes           | Integration testing, security       | Deployment & final testing      |
+| **3** | Integration support, bug fixes, deployment | Integration testing, security       | UI/UX polish & final testing    |
 
 **Total Estimated Hours**: 26–32 h (≈ 8–11 h per person)\
 **Complexity Level**: Intermediate\
